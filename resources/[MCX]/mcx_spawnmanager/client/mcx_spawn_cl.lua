@@ -71,6 +71,7 @@ CreateThread(function()
                     -- Ask server to respawn us at last_location (with fallback)
                     TriggerServerEvent("mcx_spawn:requestRespawn", "last_location")
                     canRespawn = false
+                    isDowned = false
                 end
             else
                 local secondsLeft = math.floor((respawnTimer - now) / 1000)

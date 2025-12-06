@@ -180,6 +180,16 @@ RegisterNetEvent("mcx_core:doSpawn", function(location)
         ped = PlayerPedId()
     end
 
+    -- if the player is dead, resurrect them before anything else
+    if IsEntityDead(ped) then
+        NetworkResurrectLocalPlayer(x, y, z, heading, true, true, false)
+        ClearPedTasksImmediately(ped)
+        SetEntityHealth(ped, 200)
+        SetPedArmour(ped, 0)
+        ClearPedBloodDamage(ped)
+        ped = PlayerPedId() -- refresh handle just in case
+    end
+
     FreezeEntityPosition(ped, false)
     SetEntityCollision(ped, true, true)
     SetEntityVisible(ped, true, false)
@@ -196,6 +206,7 @@ RegisterNetEvent("mcx_core:doSpawn", function(location)
 
     DoScreenFadeIn(500)
 end)
+
 
 ---------------------------------------------------------------------
 -- Periodic last_location update -> server (for respawns & reconnects)
