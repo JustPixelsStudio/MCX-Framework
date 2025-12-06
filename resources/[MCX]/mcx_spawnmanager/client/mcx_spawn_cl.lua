@@ -1,11 +1,11 @@
--- mcx_spawnmanager/client/mcx_spawn_cl.lua
+
 
 local isDead = false
 local isDowned = false
 local canRespawn = false
 local respawnTimer = 0
 
-local RESPAWN_DELAY = 15000 -- 15 seconds before the player can respawn
+local RESPAWN_DELAY = 5000 -- 15 seconds before the player can respawn
 
 ---------------------------------------------------------------------
 -- Utility: simple on-screen text at bottom center

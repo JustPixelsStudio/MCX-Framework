@@ -1,4 +1,3 @@
--- mcx_session/server/mcx_session_sv.lua
 
 AddEventHandler("playerConnecting", function(name, setKickReason, deferrals)
     print(("[MCX][Session] %s is connecting..."):format(name))
