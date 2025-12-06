@@ -1,19 +1,19 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name 'mcx_charcreator'
-description 'Temporary character creator and spawn selector UI for MCX'
-author 'MCX Framework'
-version '1.1.0'
+name 'MCX Character Creator'
+description 'Character creator + spawn menu for MCX Framework'
+author 'MCX / JustPixelsStudio'
+version '1.0.0'
 
 lua54 'yes'
 
-ui_page 'ui/index.html'
+ui_page 'html/index.html'
 
 files {
-    'ui/index.html',
-    'ui/style.css',
-    'ui/app.js'
+    'html/index.html',
+    'html/app.js',
+    'html/style.css'
 }
 
 client_scripts {
