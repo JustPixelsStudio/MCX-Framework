@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MCX Death Screen</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <div id="death-root" class="hidden">
+        <div class="death-overlay">
+            <div class="death-panel">
+                <div class="death-title">YOU ARE DOWN</div>
+                <div class="death-subtitle">Waiting for assistance...</div>
+                <div class="death-timer">
+                    <span id="timer-minutes">03</span><span class="colon">:</span><span id="timer-seconds">00</span>
+                </div>
+                <div class="death-info">
+                    Another player can revive you with a medkit<br>
+                    or drag you to a hospital.
+                </div>
+                <div id="respawn-hint" class="death-respawn-hint hidden">
+                    Press <span class="key">E</span> to respawn at hospital<br>
+                    <span id="respawn-fee-text">$500</span> will be charged.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
