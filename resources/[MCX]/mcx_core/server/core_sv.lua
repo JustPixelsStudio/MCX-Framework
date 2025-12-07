@@ -53,22 +53,45 @@ end
 local function sendCharacterAndSpawnMenu(src, charRow)
     charRow = decodeCharacterRow(charRow)
 
-    Core.Players[src] = {
-        src = src,
-        identifier = Core.Players[src] and Core.Players[src].identifier or nil,
-        account_id = Core.Players[src] and Core.Players[src].account_id or nil,
-        char_id = charRow.char_id,
-        character = charRow
-    }
+    -- Ensure we keep any existing Core.Players state (identifier/account_id)
+    Core.Players[src] = Core.Players[src] or {}
 
-    -- Send character data to client (sets ped, etc.)
+    Core.Players[src].src = src
+    Core.Players[src].char_id = charRow.char_id
+    Core.Players[src].character = charRow
+
+    -- Fallback identifier/account_id from row if not already set
+    Core.Players[src].identifier = Core.Players[src].identifier or charRow.identifier
+    Core.Players[src].account_id = Core.Players[src].account_id or charRow.account_id
+
+    -- Send character data to client (applies ped/skin, etc.)
     TriggerClientEvent("mcx_core:characterLoaded", src, charRow)
 
-    -- Open spawn selector with last_location (if any)
+    -- Determine if we have a valid last_location to offer as an option
+    local lastLoc = charRow.last_location
+    local hasLast = false
+    if type(lastLoc) == "table" and lastLoc.x and lastLoc.y and lastLoc.z then
+        hasLast = true
+    end
+
+    -- Default spawns can be configured in MCX.Config.DefaultSpawns
+    local spawns = (MCX.Config and MCX.Config.DefaultSpawns) or nil
+    if type(spawns) ~= "table" or #spawns == 0 then
+        spawns = {
+            { label = "Hospital", x = 298.0, y = -584.0, z = 43.3, heading = 70.0 },
+        }
+    end
+
+    -- Open spawn selector (handled by mcx_spawnmanager)
     TriggerClientEvent("mcx_core:openSpawnSelector", src, {
-        last_location = charRow.last_location
+        spawns = spawns,
+        last_location_available = hasLast
     })
 end
+
+---------------------------------------------------------------------
+-- Player state management
+---------------------------------------------------------------------
 
 ---------------------------------------------------------------------
 -- Player state management
@@ -181,29 +204,69 @@ RegisterNetEvent("mcx_core:spawnAt", function(data)
         return
     end
 
-    if type(data) ~= "table" or not data.x or not data.y or not data.z then
-        print(("[MCX][Core] spawnAt: invalid data from %d"):format(src))
+    if type(data) ~= "table" then
+        print(("[MCX][Core] spawnAt: invalid payload type from %d"):format(src))
         return
     end
 
-    local location = {
-        x = tonumber(data.x) or 0.0,
-        y = tonumber(data.y) or 0.0,
-        z = tonumber(data.z) or 0.0,
-        heading = tonumber(data.heading) or 0.0
-    }
+    local location
 
-    -- Store as last_location immediately so reconnects/respawns have it
-    player.character = player.character or {}
-    player.character.last_location = location
-    MCX.DB.UpdateCharacterLocation(player.char_id, location)
+    -- Case 1: Spawn at last known location
+    if data.type == "last_location" then
+        local lastLoc = player.character and player.character.last_location or nil
+        if lastLoc and lastLoc.x and lastLoc.y and lastLoc.z then
+            location = {
+                x = tonumber(lastLoc.x) or 0.0,
+                y = tonumber(lastLoc.y) or 0.0,
+                z = tonumber(lastLoc.z) or 0.0,
+                heading = tonumber(lastLoc.heading or 0.0) or 0.0
+            }
+        else
+            -- Fall back to hospital if no last_location stored
+            location = {
+                x = 298.0,
+                y = -584.0,
+                z = 43.3,
+                heading = 70.0
+            }
+        end
 
-    -- Spawn the player
+    -- Case 2: Explicit coordinates from spawn selector
+    elseif data.x and data.y and data.z then
+        location = {
+            x = tonumber(data.x) or 0.0,
+            y = tonumber(data.y) or 0.0,
+            z = tonumber(data.z) or 0.0,
+            heading = tonumber(data.heading or 0.0) or 0.0
+        }
+
+        -- Store as last_location so reconnects/respawns can use it
+        player.character = player.character or {}
+        player.character.last_location = location
+        MCX.DB.UpdateCharacterLocation(player.char_id, location)
+    else
+        print(("[MCX][Core] spawnAt: missing coords/type from %d"):format(src))
+        return
+    end
+
+    -- Final safety fallback
+    if not location then
+        location = {
+            x = 298.0,
+            y = -584.0,
+            z = 43.3,
+            heading = 70.0
+        }
+    end
+
+    -- Spawn the player on the client
     TriggerClientEvent("mcx_core:doSpawn", src, location)
-
-    -- Tell client to close NUI
-    TriggerClientEvent("mcx_core:closeUI", src)
 end)
+
+---------------------------------------------------------------------
+-- Last location updates from client (periodic)
+---------------------------------------------------------------------
+
 
 ---------------------------------------------------------------------
 -- Last location updates from client (periodic)

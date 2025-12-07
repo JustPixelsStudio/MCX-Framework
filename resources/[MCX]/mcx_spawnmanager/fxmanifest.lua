@@ -1,19 +1,21 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name 'MCX Spawnmanager'
-description 'Custom spawn & respawn manager for MCX Framework'
+name 'MCX Spawn Manager'
+description 'Spawn selector UI + logic for MCX Framework'
 author 'MCX / JustPixelsStudio'
-version '0.2.0'
+version '1.1.0'
+
+lua54 'yes'
+
+ui_page 'html/index.html'
+
+files {
+    'html/index.html',
+    'html/app.js',
+    'html/style.css'
+}
 
 client_scripts {
-    'client/mcx_spawn_cl.lua'
-}
-
-server_scripts {
-    'server/mcx_spawn_sv.lua'
-}
-
-dependencies {
-    'mcx_core'
+    'client/mcx_spawnmanager_cl.lua'
 }

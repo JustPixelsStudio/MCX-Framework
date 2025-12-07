@@ -1,10 +1,11 @@
+
 fx_version 'cerulean'
 game 'gta5'
 
 name 'MCX Character Creator'
-description 'Character creator + spawn menu for MCX Framework'
-author 'MCX / JustPixelsStudio'
-version '1.0.0'
+description 'Character creation UI for MCX Framework (split from spawn manager)'
+author 'MCX'
+version '1.2.0'
 
 lua54 'yes'
 

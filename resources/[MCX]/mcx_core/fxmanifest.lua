@@ -8,6 +8,12 @@ version '1.0.0'
 
 lua54 'yes'
 
+
+shared_scripts {
+    'shared/config.lua',
+    'shared/utils.lua'
+}
+
 client_scripts {
     'client/core_cl.lua'
 }

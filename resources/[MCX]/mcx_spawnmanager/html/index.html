@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>MCX Spawn Selector</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="app.js"></script>
+</head>
+<body>
+    <div id="mcx_ui_root" class="hidden">
+        <div id="spawn" class="container">
+            <div class="title">Select Spawn Location</div>
+
+            <div id="spawn-list" class="spawn-list">
+                <!-- locations filled dynamically from NUI message -->
+            </div>
+
+            <div class="button-row top-gap">
+                <button id="btn_last_location" class="btn secondary">Last Location</button>
+                <div class="flex-spacer"></div>
+                <button id="btn_spawn_cancel" class="btn secondary">Cancel</button>
+                <button id="btn_spawn_confirm" class="btn primary">Spawn</button>
+            </div>
+
+            <div class="hint">Choose a spawn point or use Last Location.</div>
+        </div>
+    </div>
+</body>
+</html>
